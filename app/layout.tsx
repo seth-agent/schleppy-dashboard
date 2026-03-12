@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import ConvexClientProvider from "./ConvexClientProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,20 +28,22 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
-        <div className="min-h-screen flex flex-col">
-          <header className="border-b border-card-border px-6 py-4">
-            <div className="flex items-center justify-between max-w-7xl mx-auto w-full">
-              <h1 className="text-xl font-bold tracking-tight">
-                Schleppy Dashboard
-              </h1>
-              <div className="flex items-center gap-2">
-                <span className="inline-block w-2 h-2 rounded-full bg-success" />
-                <span className="text-sm text-muted">Online</span>
+        <ConvexClientProvider>
+          <div className="min-h-screen flex flex-col">
+            <header className="border-b border-card-border px-6 py-4">
+              <div className="flex items-center justify-between max-w-7xl mx-auto w-full">
+                <h1 className="text-xl font-bold tracking-tight">
+                  Schleppy Dashboard
+                </h1>
+                <div className="flex items-center gap-2">
+                  <span className="inline-block w-2 h-2 rounded-full bg-success" />
+                  <span className="text-sm text-muted">Online</span>
+                </div>
               </div>
-            </div>
-          </header>
-          <main className="flex-1">{children}</main>
-        </div>
+            </header>
+            <main className="flex-1">{children}</main>
+          </div>
+        </ConvexClientProvider>
       </body>
     </html>
   );

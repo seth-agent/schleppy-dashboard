@@ -1,10 +1,16 @@
-import { describe, it, expect, afterEach } from "vitest";
+import { describe, it, expect, afterEach, vi } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
 import ActivityFeed from "@/app/components/ActivityFeed";
 import TaskList from "@/app/components/TaskList";
 import ProjectList from "@/app/components/ProjectList";
 import GitActivity from "@/app/components/GitActivity";
 import MessageInput from "@/app/components/MessageInput";
+
+// Mock convex/react hooks
+vi.mock("convex/react", () => ({
+  useQuery: () => undefined,
+  useMutation: () => vi.fn(),
+}));
 
 afterEach(() => {
   cleanup();

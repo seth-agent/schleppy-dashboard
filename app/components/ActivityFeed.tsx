@@ -1,33 +1,39 @@
 "use client";
 
-import { ActivityLogEntry } from "@/lib/supabase";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
-const placeholderActivities: ActivityLogEntry[] = [
+type Activity = {
+  _id: string;
+  type: string;
+  message: string;
+  metadata?: any;
+  createdAt: number;
+};
+
+const placeholderActivities: Activity[] = [
   {
-    id: "1",
+    _id: "1",
     type: "task_completed",
     message: "Completed PR review for react-native-macos",
-    metadata: null,
-    created_at: new Date(Date.now() - 1000 * 60 * 5).toISOString(),
+    createdAt: Date.now() - 1000 * 60 * 5,
   },
   {
-    id: "2",
+    _id: "2",
     type: "session_started",
     message: "New session started",
-    metadata: null,
-    created_at: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+    createdAt: Date.now() - 1000 * 60 * 30,
   },
   {
-    id: "3",
+    _id: "3",
     type: "git_push",
     message: "Pushed 3 commits to specprint/main",
-    metadata: null,
-    created_at: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
+    createdAt: Date.now() - 1000 * 60 * 60,
   },
 ];
 
-function timeAgo(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime();
+function timeAgo(timestamp: number): string {
+  const diff = Date.now() - timestamp;
   const minutes = Math.floor(diff / 60000);
   if (minutes < 1) return "just now";
   if (minutes < 60) return `${minutes}m ago`;
@@ -37,16 +43,22 @@ function timeAgo(dateStr: string): string {
 }
 
 export default function ActivityFeed() {
+  const convexActivities: Activity[] | undefined = useQuery(api.activityLog.list);
+  const activities: Activity[] =
+    convexActivities && convexActivities.length > 0
+      ? convexActivities
+      : placeholderActivities;
+
   return (
     <section data-testid="activity-feed" className="bg-card-bg border border-card-border rounded-lg p-4">
       <h2 className="text-lg font-semibold mb-3">Activity Feed</h2>
       <ul className="space-y-3">
-        {placeholderActivities.map((activity) => (
-          <li key={activity.id} className="flex items-start gap-3">
+        {activities.map((activity: Activity) => (
+          <li key={activity._id} className="flex items-start gap-3">
             <span className="mt-1 w-2 h-2 rounded-full bg-accent shrink-0" />
             <div className="flex-1 min-w-0">
               <p className="text-sm">{activity.message}</p>
-              <p className="text-xs text-muted">{timeAgo(activity.created_at)}</p>
+              <p className="text-xs text-muted">{timeAgo(activity.createdAt)}</p>
             </div>
           </li>
         ))}

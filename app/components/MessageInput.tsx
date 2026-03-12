@@ -1,21 +1,24 @@
 "use client";
 
 import { useState, FormEvent } from "react";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 export default function MessageInput() {
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
+  const sendMessage = useMutation(api.messages.send);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     if (!message.trim()) return;
 
     setSending(true);
-    // TODO: send message to Schleppy via Supabase or API
-    console.log("Sending message:", message);
-
-    // Simulate sending
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    try {
+      await sendMessage({ direction: "outbound", content: message.trim() });
+    } catch (err) {
+      console.error("Failed to send message:", err);
+    }
     setMessage("");
     setSending(false);
   }

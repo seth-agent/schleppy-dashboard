@@ -1,36 +1,53 @@
 "use client";
 
-import { Project } from "@/lib/supabase";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+
+type Project = {
+  _id: string;
+  name: string;
+  description: string;
+  status: string;
+  repoUrl?: string;
+  createdAt: number;
+  updatedAt: number;
+};
 
 const placeholderProjects: Project[] = [
   {
-    id: "1",
+    _id: "1",
     name: "react-native-macos-official",
     description: "OOT React Native platform for macOS",
     status: "active",
-    repo_url: "https://github.com/user/react-native-macos",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
+    repoUrl: "https://github.com/user/react-native-macos",
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
   },
   {
-    id: "2",
+    _id: "2",
     name: "specprint",
     description: "Thingiverse for software specs",
     status: "active",
-    repo_url: "https://github.com/user/specprint",
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
+    repoUrl: "https://github.com/user/specprint",
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
   },
 ];
 
 export default function ProjectList() {
+  const convexProjects: Project[] | undefined = useQuery(api.projects.list);
+  const projects: Project[] =
+    convexProjects && convexProjects.length > 0
+      ? convexProjects
+      : placeholderProjects;
+
   return (
     <section data-testid="project-list" className="bg-card-bg border border-card-border rounded-lg p-4">
       <h2 className="text-lg font-semibold mb-3">Projects</h2>
       <ul className="space-y-2">
-        {placeholderProjects.map((project) => (
+        {projects.map((project: Project) => (
           <li
-            key={project.id}
+            key={project._id}
             className="p-3 rounded-md bg-background border border-card-border"
           >
             <div className="flex items-center justify-between">
